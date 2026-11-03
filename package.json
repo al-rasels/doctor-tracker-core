@@ -1,50 +1,25 @@
 {
-  "name": "doctor-tracker-core",
+  "name": "doctor-tracker-monolith",
   "version": "1.0.0",
-  "description": "Doctor Tracker Core - Standalone Backend REST API built with Node.js, Express, TypeScript, and MongoDB",
-  "main": "dist/server.js",
-  "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "rimraf dist && tsc",
-    "start": "node dist/server.js",
-    "seed": "tsx src/seed/seeder.ts",
-    "typecheck": "tsc --noEmit"
-  },
-  "keywords": [
-    "express",
-    "typescript",
-    "mongodb",
-    "mongoose",
-    "doctor-tracker",
-    "rest-api",
-    "zod"
+  "private": true,
+  "description": "Doctor Tracker - Modular Monolith with separate Next.js Frontend and Node.js Express Backend",
+  "workspaces": [
+    "backend",
+    "frontend"
   ],
-  "author": "Care Guide BD Candidate",
-  "license": "ISC",
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "express-rate-limit": "^7.4.1",
-    "helmet": "^7.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.7.2",
-    "morgan": "^1.10.0",
-    "zod": "^3.23.8"
+  "scripts": {
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm run dev --workspace=backend\" \"npm run dev --workspace=frontend\"",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=backend && npm run build --workspace=frontend",
+    "build:backend": "npm run build --workspace=backend",
+    "build:frontend": "npm run build --workspace=frontend",
+    "start:backend": "npm run start --workspace=backend",
+    "start:frontend": "npm run start --workspace=frontend",
+    "seed": "npm run seed --workspace=backend",
+    "typecheck": "npm run typecheck --workspace=backend"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/jsonwebtoken": "^9.0.7",
-    "@types/morgan": "^1.9.9",
-    "@types/node": "^20.17.0",
-    "rimraf": "^6.0.1",
-    "tsx": "^4.19.1",
-    "typescript": "^5.6.3"
-  },
-  "engines": {
-    "node": ">=18.0.0"
+    "concurrently": "^8.2.2"
   }
 }
