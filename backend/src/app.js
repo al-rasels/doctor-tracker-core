@@ -9,24 +9,49 @@ import apiRouter from "./routes/index.js";
 
 const app = express();
 
-// Security HTTP headers
-app.use(helmet());
-
-// CORS configuration
+// Security HTTP headers with cross-origin resource policy enabled
 app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, Postman) or whitelisted origins
-      if (!origin || allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error(`Origin ${origin} not allowed by CORS`));
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }
   })
 );
+
+/**
+ * Checks if the request origin is permitted by CORS policies.
+ * Dynamically allows configured CLIENT_URL origins, Netlify production & deploy preview domains,
+ * and local development hosts.
+ */
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true; // Allow non-browser requests (Postman, curl, server-to-server)
+  if (allowedOrigins.includes("*") || allowedOrigins.includes(origin)) return true;
+
+  // Automatically allow Netlify domains (*.netlify.app)
+  if (/^https:\/\/([a-zA-Z0-9_-]+\.)?netlify\.app$/.test(origin)) return true;
+
+  // Automatically allow local development ports
+  if (/^http:\/\/localhost:[0-9]+$/.test(origin) || /^http:\/\/127\.0\.0\.1:[0-9]+$/.test(origin)) {
+    return true;
+  }
+
+  return false;
+};
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (isAllowedOrigin(origin)) {
+      return callback(null, true);
+    }
+    // Gracefully reject without throwing an unhandled 500 error
+    return callback(null, false);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"]
+};
+
+// Enable CORS with preflight support across all routes
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 // Body parsers
 app.use(express.json({ limit: "10mb" }));
@@ -61,4 +86,3 @@ app.use(notFoundHandler);
 app.use(globalErrorHandler);
 
 export default app;
-
