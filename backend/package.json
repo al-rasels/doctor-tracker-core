@@ -1,18 +1,19 @@
 {
   "name": "doctor-tracker-core",
   "version": "1.0.0",
-  "description": "Doctor Tracker Core - Standalone Backend REST API built with Node.js, Express, TypeScript, and MongoDB",
-  "main": "dist/server.js",
+  "description": "Doctor Tracker Core - Standalone Backend REST API built with Node.js, Express, Functional JavaScript, and MongoDB",
+  "main": "src/server.js",
+  "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "rimraf dist && tsc",
-    "start": "node dist/server.js",
-    "seed": "tsx src/seed/seeder.ts",
-    "typecheck": "tsc --noEmit"
+    "dev": "node --watch src/server.js",
+    "build": "node -e \"console.log('Backend is pure JavaScript, no build required')\"",
+    "start": "node src/server.js",
+    "seed": "node src/seed/seeder.js"
   },
   "keywords": [
     "express",
-    "typescript",
+    "javascript",
+    "functional-programming",
     "mongodb",
     "mongoose",
     "doctor-tracker",
@@ -32,17 +33,6 @@
     "mongoose": "^8.7.2",
     "morgan": "^1.10.0",
     "zod": "^3.23.8"
-  },
-  "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/jsonwebtoken": "^9.0.7",
-    "@types/morgan": "^1.9.9",
-    "@types/node": "^20.17.0",
-    "rimraf": "^6.0.1",
-    "tsx": "^4.19.1",
-    "typescript": "^5.6.3"
   },
   "engines": {
     "node": ">=18.0.0"
